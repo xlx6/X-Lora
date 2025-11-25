@@ -117,13 +117,16 @@ def initialize_lora_with_svd(
     Vt_r = Vt[:rank, :] # (r, in_features)
     
     if include_sigma:
-        B_init = U_r @ torch.diag(S_r)  # (out_features, r)
-        A_init = Vt_r                    # (r, in_features)
+        sqrt_S = torch.diag(torch.sqrt(S_r))
+        B_init = U_r @ sqrt_S
+        A_init = sqrt_S @ Vt_r                    # (r, in_features)
+        low_rank_approx = U_r @ (torch.diag(S_r) @ Vt_r)
     else:
         B_init = U_r
-        A_init = torch.diag(S_r) @ Vt_r
+        A_init = Vt_r
+        low_rank_approx = U_r @ Vt_r
     
-    low_rank_approx = U_r @ torch.diag(S_r) @ Vt_r
+    
     W_residual = original_weight - low_rank_approx
     
     reconstruction_error = torch.norm(original_weight - low_rank_approx, p='fro')

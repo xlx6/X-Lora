@@ -6,9 +6,9 @@ DATA_DIR=./sst2
 EPOCHS=3
 BATCH=256
 LR=2e-5
-REPORT=none
-
-for model in ./distilbert-base-uncased ./bert-base-uncased ./bert-large-uncased; do
+REPORT=swanlab
+#./bert-base-uncased ./bert-large-uncased
+for model in ./distilbert-base-uncased; do
     for r in 2 16 64; do
         model_name=$(basename $model)
         # python train.py \
@@ -26,7 +26,7 @@ for model in ./distilbert-base-uncased ./bert-base-uncased ./bert-large-uncased;
         python train.py \
             --lora_alpha $r \
             --report_to $REPORT \
-            --exp_name exp2_baseline_${model_name}_r${r} \
+            --exp_name UV_baseline_${model_name}_r${r} \
             --method baseline \
             --rank $r \
             --model_name_or_path $model \
