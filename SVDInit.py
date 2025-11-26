@@ -97,7 +97,8 @@ def analyze_weight_spectrum(weight: torch.Tensor) -> Dict:
 def initialize_lora_with_svd(
     original_weight: torch.Tensor,
     rank: int,
-    include_sigma: bool = True
+    include_sigma: bool = True,
+    mode=None
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Compute A, B
@@ -115,12 +116,27 @@ def initialize_lora_with_svd(
     U_r = U[:, :rank]  # (out_features, r)
     S_r = S[:rank]      # (r,)
     Vt_r = Vt[:rank, :] # (r, in_features)
+    logger.info(f'Apply SVD-Init with {mode}')
     
-    if include_sigma:
+    if mode == 'left':
+        S_r = torch.diag(S_r)
+        B_init = U_r @ S_r
+        A_init = Vt_r                    # (r, in_features)
+        low_rank_approx = (U_r @ S_r) @ Vt_r
+    elif mode == 'right':
+        S_r = torch.diag(S_r)
+        B_init = U_r
+        A_init = S_r @ Vt_r                    # (r, in_features)
+        low_rank_approx = U_r @ (S_r @ Vt_r)
+    elif mode == 'leftright':
         sqrt_S = torch.diag(torch.sqrt(S_r))
         B_init = U_r @ sqrt_S
         A_init = sqrt_S @ Vt_r                    # (r, in_features)
-        low_rank_approx = U_r @ (torch.diag(S_r) @ Vt_r)
+        low_rank_approx = U_r @ (sqrt_S @ Vt_r)
+    elif mode == 'none':
+        B_init = U_r
+        A_init = Vt_r
+        low_rank_approx = U_r @ Vt_r
     else:
         B_init = U_r
         A_init = Vt_r
@@ -221,7 +237,8 @@ def apply_svd_initialization_to_model(
     model: PeftModel,
     original_model: nn.Module,
     config: SVDLoraConfig,
-    target_modules: Optional[List[str]] = None
+    target_modules: Optional[List[str]] = None,
+    mode=None
 ):
     """
     Apply SVD-init to PEFT Model
@@ -260,7 +277,8 @@ def apply_svd_initialization_to_model(
             A_init, B_init, W_residual = initialize_lora_with_svd(
                 original_weight,
                 rank,
-                include_sigma=True
+                include_sigma=True,
+                mode=mode
             )
             
             for adapter_name in module.lora_A.keys():
@@ -289,6 +307,7 @@ def create_svd_lora_model(
     auto_rank_selection: bool = False,
     energy_threshold: float = 0.9,
     task_type: Optional[str] = None,
+    mode='dtandard',
     **kwargs
 ):
     """
@@ -346,7 +365,8 @@ def create_svd_lora_model(
             model,
             original_model,
             config,
-            target_modules
+            target_modules,
+            mode=mode
         )
     
     return model

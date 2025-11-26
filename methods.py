@@ -10,7 +10,7 @@ from OrthogonalLoRA import apply_orthogonal_lora_to_model, OrthogonalLoRATrainer
 from StructuredLoRA import apply_structured_lora_to_model
 
 
-DEFAULT_TARGETS_DISTILBERT = ["q_lin", "k_lin", "v_lin"]
+DEFAULT_TARGETS_DISTILBERT = ["query", "key", "value"]
 
 
 def load_base_model(model_name_or_path: str,
@@ -51,7 +51,8 @@ def build_svd_lora(model: nn.Module,
                    targets: Optional[List[str]] = None,
                    use_svd_init: bool = True,
                    auto_rank_selection: bool = False,
-                   energy_threshold: float = 0.9):
+                   energy_threshold: float = 0.9,
+                   mode: str='standard'):
     targets = targets or DEFAULT_TARGETS_DISTILBERT
     svd_model = create_svd_lora_model(
         base_model=model,
@@ -61,6 +62,7 @@ def build_svd_lora(model: nn.Module,
         use_svd_init=use_svd_init,
         auto_rank_selection=auto_rank_selection,
         energy_threshold=energy_threshold,
+        mode=mode
     )
     return svd_model
 

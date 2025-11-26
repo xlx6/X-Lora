@@ -64,6 +64,7 @@ def parse_args():
     # SVD-specific
     p.add_argument("--svd_auto_rank", type=bool, default=False)
     p.add_argument("--svd_energy_threshold", type=float, default=0.9)
+    p.add_argument("--mode", type=str, default='standard')
 
     # Outputs
     p.add_argument("--output_dir", type=str, default=None)
@@ -105,7 +106,7 @@ def main():
     elif args.method == "svd":
         model = build_svd_lora(model, r=args.rank, alpha=args.lora_alpha, targets=args.targets,
                                use_svd_init=True, auto_rank_selection=args.svd_auto_rank,
-                               energy_threshold=args.svd_energy_threshold)
+                               energy_threshold=args.svd_energy_threshold, mode=args.mode)
         trainer_cls = Trainer
         trainer_kwargs = {}
     elif args.method == "ortho":
