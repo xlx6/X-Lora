@@ -12,12 +12,12 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 setup(
     name="x-lora",
     version="0.1.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="xlx",
+    author_email="2641854521@qq.com",
     description="Exploring LoRA variants from matrix decomposition perspective",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/X-Lora",
+    url="https://github.com/xlx6/X-Lora",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Constants per README
 MODEL=./distilbert-base-uncased
 DATA_DIR=./sst2
 EPOCHS=3
