@@ -10,6 +10,9 @@ This project implements and compares various LoRA variants:
 - **Orthogonal LoRA**: LoRA with orthogonal constraints (regularization or QR decomposition)
 - **Structured LoRA**: LoRA with structured matrices (LU or Cholesky decomposition)
 
+Results
+![results](./figures/results.png)
+
 ## Project Structure
 
 ```
@@ -162,16 +165,3 @@ Training outputs are saved in the `outputs/` directory with:
 ## License
 
 See LICENSE file for details.
-
-## Citation
-
-If you use this code in your research, please cite:
-
-```bibtex
-@software{x_lora2024,
-  title={X-LoRA: Exploring LoRA Variants from Matrix Decomposition Perspective},
-  author={Your Name},
-  year={2024},
-  url={https://github.com/yourusername/X-Lora}
-}
-```
