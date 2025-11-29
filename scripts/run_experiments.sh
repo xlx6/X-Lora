@@ -32,7 +32,7 @@ for LAM in 0 1e-5 1e-4 1e-3 1e-2; do
 done
 
 echo "Aggregating results to outputs/summary.csv"
-python aggregate_results.py --root outputs --out outputs/summary.csv
+python tools/aggregate_results.py --root outputs --out outputs/summary.csv
 
 echo "Done."
 

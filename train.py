@@ -3,7 +3,6 @@ import json
 import os
 from datetime import datetime
 from typing import List
-import types
 import numpy as np
 import torch
 from transformers import (
@@ -14,20 +13,17 @@ from transformers import (
     set_seed,
 )
 
-from data_utils import load_sst2, compute_metrics, count_trainable_params
-from methods import (
+from src.x_lora.data import load_sst2, compute_metrics, count_trainable_params
+from src.x_lora.train import (
     load_base_model,
     build_baseline_lora,
     build_svd_lora,
     build_orthogonal_lora,
     build_structured_lora,
     DEFAULT_TARGETS_DISTILBERT,
+    LoRAMonitorCallback,
 )
-from OrthogonalLoRA import OrthogonalLoRATrainer
-import re
-from transformers import TrainerCallback
-
-class LoRAMonitorCallback(TrainerCallback):
+from src.x_lora.models import OrthogonalLoRATrainer
     def __init__(self, output_dir):
         self.output_file = os.path.join(output_dir, "lora_metrics.jsonl")
         self.prev_weights = {}
@@ -133,15 +129,6 @@ class LoRAMonitorCallback(TrainerCallback):
         if len(metrics) > 2:
             with open(self.output_file, "a") as f:
                 f.write(json.dumps(metrics) + "\n")
-
-    def on_train_begin(self, args, state, control, model=None, **kwargs):
-        groups = self._get_lora_params(model)
-        for name, params in groups.items():
-            self.prev_weights[name] = {
-                "A": params["lora_A"].detach().cpu().clone(),
-                "B": params["lora_B"].detach().cpu().clone()
-            }
-
 
 def parse_args():
     p = argparse.ArgumentParser(description="Train DistilBERT on SST-2 with LoRA variants")

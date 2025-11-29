@@ -5,9 +5,9 @@ import torch.nn as nn
 from transformers import AutoModelForSequenceClassification
 from peft import LoraConfig, get_peft_model, TaskType
 
-from SVDInit import create_svd_lora_model, get_target_modules_for_model
-from OrthogonalLoRA import apply_orthogonal_lora_to_model, OrthogonalLoRATrainer
-from StructuredLoRA import apply_structured_lora_to_model
+from ..models.svd_lora import create_svd_lora_model, get_target_modules_for_model
+from ..models.orthogonal_lora import apply_orthogonal_lora_to_model, OrthogonalLoRATrainer
+from ..models.structured_lora import apply_structured_lora_to_model
 
 
 DEFAULT_TARGETS_DISTILBERT = ["query", "key", "value"]
