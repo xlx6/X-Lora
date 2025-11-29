@@ -53,8 +53,8 @@ cd X-Lora
 
 2. Create a virtual environment (recommended):
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+conda create -n x-lora python=3.10
+conda activate x-lora
 ```
 
 3. Install dependencies:
